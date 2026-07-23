@@ -11,16 +11,17 @@
 
 library(shiny)
 library(bslib)
-library(readr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(ggthemes)
 library(ggrepel)
-library(maps)
-library(mapdata)
 library(lubridate)
 library(DT)
+
+# Les donnees sont pre-parsees en .rds (voir scripts/convert_csv_to_rds.R).
+# On lit donc avec readRDS() : plus de parsing CSV cote navigateur (Shinylive),
+# et plus besoin des packages readr / maps / mapdata sous webR.
 
 # Constantes ───────────────────────────────────────────────────────────────----
 
@@ -38,12 +39,10 @@ DATASET_COLORS <- c(
 MOIS_LETTRES <- setNames(LETTERS[1:12], 1:12)
 
 # Chargement codes BODC parametres hydro
-BODC_DATA <- tryCatch({
-  read_delim("data/Additional_data/BODC_QUADRIGE_DIAS_JY.csv",
-             delim = ";", escape_double = FALSE, trim_ws = TRUE, show_col_types = FALSE)
-}, error = function(e) {
-  NULL
-})
+BODC_DATA <- tryCatch(
+  readRDS("data/Additional_data/BODC_QUADRIGE_DIAS_JY.rds"),
+  error = function(e) NULL
+)
 
 
 # Palette taxonomie
@@ -73,11 +72,10 @@ load_phyto <- function(base_path = "output/data_modif") {
 
   read_safe <- function(path) {
     if (!file.exists(path)) return(NULL)
-    read_delim(path, delim = ",", escape_double = FALSE,
-               trim_ws = TRUE, show_col_types = FALSE)
+    readRDS(path)
   }
 
-  PHYTOBS <- read_safe(file.path(base_path, "PHYTOBS_DOME_PP_FR.csv"))
+  PHYTOBS <- read_safe(file.path(base_path, "PHYTOBS_DOME_PP_FR.rds"))
   if (!is.null(PHYTOBS)) {
     PHYTOBS <- PHYTOBS %>% # Besoin de renommer les stations...
       mutate(STATN = case_when(
@@ -93,16 +91,16 @@ load_phyto <- function(base_path = "output/data_modif") {
       ), DATA = "PHYTOBS")
   }
 
-  REPHY   <- read_safe(file.path(base_path, "REPHY_DOME_PP_FR.csv"))
+  REPHY   <- read_safe(file.path(base_path, "REPHY_DOME_PP_FR.rds"))
   if (!is.null(REPHY))   { REPHY$DATA <- "REPHY"; REPHY$SMPNO <- as.character(REPHY$SMPNO) }
 
-  SOMLIT  <- read_safe(file.path(base_path, "SOMLIT_DOME_PP_FR.csv"))
+  SOMLIT  <- read_safe(file.path(base_path, "SOMLIT_DOME_PP_FR.rds"))
   if (!is.null(SOMLIT))  { SOMLIT$DATA <- "SOMLIT"; SOMLIT$QFLAG <- NA } # Colonne manquante
 
-  PNMI_PP    <- read_safe(file.path(base_path, "PNMI_DOME_PP_FR.csv"))
+  PNMI_PP    <- read_safe(file.path(base_path, "PNMI_DOME_PP_FR.rds"))
   if (!is.null(PNMI_PP))    PNMI_PP$DATA    <- "PNMI"
 
-  ROSCOFF <- read_safe(file.path(base_path, "ROSCOFF_DOME_PP_FR.csv"))
+  ROSCOFF <- read_safe(file.path(base_path, "ROSCOFF_DOME_PP_FR.rds"))
   if (!is.null(ROSCOFF)) ROSCOFF$DATA <- "SBR"
 
   dfs <- Filter(Negate(is.null), list(PHYTOBS, REPHY, SOMLIT, PNMI_PP, ROSCOFF))
@@ -136,11 +134,10 @@ load_phyto <- function(base_path = "output/data_modif") {
 # ── Chargement donnees Zooplancton ────────────────────────────────────────────
 
 load_zoo <- function(base_path = "output/data_modif") {
-  path <- file.path(base_path, "PNMI_DOME_ZP_FR.csv")
+  path <- file.path(base_path, "PNMI_DOME_ZP_FR.rds")
   if (!file.exists(path)) return(NULL)
 
-  read_delim(path, delim = ";", escape_double = FALSE,
-             trim_ws = TRUE, show_col_types = FALSE) %>%
+  readRDS(path) %>%
     mutate(DATA = "PNMI") %>%
     select(STATN, LATIT, LONGI, DATA, SDATE, MXDEP, CRUIS, SPECI, VALUE, RESP_RESULTAT) %>%
     distinct() %>%
@@ -167,20 +164,20 @@ load_zoo <- function(base_path = "output/data_modif") {
 
 load_hydro <- function(base_path = "output/data_modif") {
 
-  read_safe <- function(path, skip = 0) {
+  # Les lignes d'en-tete (skip = 32 / 18) sont deja retirees a la conversion RDS.
+  read_safe <- function(path) {
     if (!file.exists(path)) return(NULL)
-    read_delim(path, delim = ",", escape_double = FALSE,
-               trim_ws = TRUE, skip = skip, show_col_types = FALSE)
+    readRDS(path)
   }
 
   # Charger les donnees hydrologie
-  REPHY <- read_safe(file.path(base_path, "REPHY_OCEAN.csv"), skip = 32)
+  REPHY <- read_safe(file.path(base_path, "REPHY_OCEAN.rds"))
   if (!is.null(REPHY)) {
     REPHY <- REPHY %>%
       mutate(DATA = "REPHY", Station = sub("_.*", "", Station)) #Recuperer les noms de stations corrects
   }
 
-  SOMLIT <- read_safe(file.path(base_path, "SOMLIT_OCEAN.csv"), skip = 18)
+  SOMLIT <- read_safe(file.path(base_path, "SOMLIT_OCEAN.rds"))
   if (!is.null(SOMLIT)) {
     SOMLIT <- SOMLIT %>%
       mutate(DATA = "SOMLIT", Station = sub("_.*", "", Station)) #Idem
@@ -200,12 +197,11 @@ load_hydro <- function(base_path = "output/data_modif") {
     )
 
   # Charger la table de correspondance des parametres
-  param_file <- "data/Additional_data/BODC_QUADRIGE_DIAS_JY.csv"
+  param_file <- "data/Additional_data/BODC_QUADRIGE_DIAS_JY.rds"
   if (!file.exists(param_file)) {
     Param <- data.frame(METH = character(), PARAM = character(), stringsAsFactors = FALSE)
   } else {
-    Param <- read_delim(param_file, delim = ";", escape_double = FALSE,
-                        trim_ws = TRUE, show_col_types = FALSE)
+    Param <- readRDS(param_file)
   }
 
   # Coercer tous les types a character avant bind_rows pour eviter les conflits
@@ -283,7 +279,9 @@ TYPE_CONFIG <- list(
 
 # Fond de carte ─────────────────────---────────────────────────────────────────
 
-WORLDMAP <- map_data("worldHires")
+# Fond de carte pre-calcule (worldHires recadre France) -> pas de maps/mapdata
+# necessaires sous webR. Genere par scripts/convert_csv_to_rds.R.
+WORLDMAP <- readRDS("data/worldmap_hires_france.rds")
 
 # Fonction faire la carte ──────────────────────────────────────────────────────
 
@@ -810,7 +808,9 @@ ui <- page_sidebar(
     "Données HPEL - Visualisation/effort d'échantillonnage",
     style = "display: flex; align-items: center;"
   ),
-  theme = bs_theme(bootswatch = "lux", base_font = font_google("Inter")),
+  # Pas de font_google() : elle telecharge la police au demarrage (curl), ce qui
+  # echoue sous webR/Shinylive. Le bootswatch "lux" fournit deja sa police.
+  theme = bs_theme(bootswatch = "lux"),
 
   sidebar = sidebar(
     width = 320,
@@ -1207,11 +1207,9 @@ server <- function(input, output, session) {
     if (is.null(Phyto) || nrow(Phyto) == 0) return(NULL)
 
     # Charger la taxonomie appropriee
-    tax_file <- "data/Additional_data/Taxonomy_correspondance_rank.csv"
+    tax_file <- "data/Additional_data/Taxonomy_correspondance_rank.rds"
 
-    Taxonomy_correspondance <- read_delim(tax_file, 
-                                          delim = ";", escape_double = FALSE, col_names = T, 
-                                          trim_ws = TRUE)
+    Taxonomy_correspondance <- readRDS(tax_file)
     colnames(Taxonomy_correspondance)[1] <- "SPECI"
     
     # Convertir SPECI en numeric pour que ça match avec Phyto (qui est double)
