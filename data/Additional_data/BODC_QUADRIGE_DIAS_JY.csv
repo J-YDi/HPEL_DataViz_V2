@@ -1,0 +1,58 @@
+﻿PARAM;METH;Nom complet
+CHLA;CPHLSXP1;Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >GF/F phase] by filtration, acetone extraction and spectrophotometry
+CHLA;CPHLFLP1;Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >GF/F phase] by filtration, acetone extraction and fluorometry
+CHLA;CPHLMHP1;Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >GF/F phase] by filtration, methanol extraction and high performance liquid chromatography (HPLC)
+CHLA;CPHLHPP1;Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >GF/F phase] by filtration, acetone extraction and high performance liquid chromatography (HPLC)
+CHLA;CPHLSSP1;Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >GF/F phase] by filtration, acetone extraction and trichromatic spectrophotometry following the Jeffrey and Humphrey protocol
+NH4;AMONDSRX;Concentration of ammonium {NH4+ CAS 14798-03-9} per unit volume of the water body [dissolved plus reactive particulate phase] by ammonium fluorometry after Kerouel and Aminot (1997)
+NH4;AMONMATX;Concentration of ammonium {NH4+ CAS 14798-03-9} per unit volume of the water body [dissolved plus reactive particulate phase] by manual colorimetric analysis
+NH4;AMONFID2;Concentration of ammonium {NH4+ CAS 14798-03-9} per unit volume of the water body [dissolved plus reactive particulate <0.4/0.45um phase] by filtration and flow-injection analysis
+NO3+NO2;NTRZAATX;Concentration of nitrate+nitrite {NO3+NO2} per unit volume of the water body [dissolved plus reactive particulate phase] by colorimetric autoanalysis
+NO3+NO2;NTRZMATX;Concentration of nitrate+nitrite {NO3+NO2} per unit volume of the water body [dissolved plus reactive particulate phase] by manual colorimetric analysis
+NO3+NO2;NTRZNHPX;Concentration of nitrate+nitrite {NO3+NO2} per unit volume of the water body [dissolved plus reactive particulate phase] by high performance liquid chromatography (HPLC)
+OXY;DOXYAAOP;Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by optode
+OXY;DOXYPE01;Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ pulsed electrode
+OXY;DOXYWITX;Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by Winkler titration
+PO4;PHOSMAD1;Concentration of phosphate {PO43- CAS 14265-44-2} per unit volume of the water body [dissolved plus reactive particulate <GF/F phase] by filtration and manual colorimetric analysis
+PO4;PHOSAAD1;Concentration of phosphate {PO43- CAS 14265-44-2} per unit volume of the water body [dissolved plus reactive particulate <GF/F phase] by filtration and colorimetric autoanalysis
+SALI;PSALTC01;Practical salinity of the water body by in-situ conductivity cell and computation using UNESCO 1983 algorithm
+SALI;PSALHD01;Practical salinity of the water body by hydrometry and computation using UNESCO 1983 algorithm
+SALI;PSALPR01;Practical salinity of the water body by conductivity cell and computation using UNESCO 1983 algorithm
+SALI;PSALKT01;Practical salinity of the water body by titration against silver nitrate (AgNO3) and computation using UNESCO 2010 algorithm
+SALI;PSALRF01;Practical salinity of the water body by refractometry and computation using UNESCO 1983 algorithm
+SALI;PSALBSTX;Practical salinity of the water body by bench salinometer and computation using UNESCO 1983 algorithm
+SIOH;SLCAAATX;Concentration of silicate {SiO44- CAS 17181-37-2} per unit volume of the water body [dissolved plus reactive particulate phase] by colorimetric autoanalysis
+SIOH;SLCAMATX;Concentration of silicate {SiO44- CAS 17181-37-2} per unit volume of the water body [dissolved plus reactive particulate phase] by manual colorimetric analysis
+TEMP;PSSTTS01;Temperature of the water body by in-situ thermometer
+TEMP;TEMPPR01;Temperature of the water body
+TEMP;TEMPRTNX;Temperature of the water body by reversing thermometer
+TURB;NEPHIF01;Turbidity of water in the water body by in-situ nephelometer
+TURB;TURBXXXX;Turbidity of water in the water body
+TURB-FNU;TURBPR01;Turbidity of water in the water body by in-situ optical backscatter measurement and laboratory calibration against formazin
+MES;MES;
+PON;NOP;
+DN15;DN15;
+DC13;DC13;
+PH;PHSWSXXX;pH (seawater scale) {pH[SWS]} of the water body
+NO3;NTRAYYDZ;Concentration of nitrate {NO3- CAS 14797-55-8} per unit volume of the water body [dissolved plus reactive particulate phase]
+NO2;NTRIAATX;Concentration of nitrite {NO2- CAS 14797-65-0} per unit volume of the water body [dissolved plus reactive particulate phase] by colorimetric autoanalysis
+POC;CHEMM017;Concentration of organic carbon {organic_C CAS 7440-44-0} {POC} per unit volume of the water body [particulate >unknown phase] by gas chromatography
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;

@@ -1,0 +1,10 @@
+name: app_shiny
+title:
+username: jy-dias
+account: jy-dias
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 17352908
+bundleId: 11989233
+url: https://jy-dias.shinyapps.io/app_shiny/
+version: 1

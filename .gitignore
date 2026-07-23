@@ -1,0 +1,18 @@
+# R
+.Rhistory
+.RData
+.RDataTmp
+.Rproj.user/
+.Renviron
+
+# Sortie Shinylive locale (regeneree par le workflow)
+/site/
+
+# Donnees sources CSV : gardees en local, NON versionnees (les .rds versionnes
+# dans app_shiny/ suffisent au deploiement). Retirez cette ligne si vous voulez
+# committer les CSV pour pouvoir regenerer les .rds depuis CI.
+/data_source/
+
+# macOS / editeurs
+.DS_Store
+output/data_modif/REPHY_DOME_PP_FR.csv
