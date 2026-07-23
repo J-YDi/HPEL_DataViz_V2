@@ -808,7 +808,7 @@ ui <- page_sidebar(
     "Données HPEL - Visualisation/effort d'échantillonnage",
     style = "display: flex; align-items: center;"
   ),
-  theme = bs_theme(bootswatch = "lux", base_font = font_google("Inter")),
+  theme = bs_theme(version = 5),
 
   sidebar = sidebar(
     width = 320,
