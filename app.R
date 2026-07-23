@@ -1157,32 +1157,31 @@ server <- function(input, output, session) {
   })
 
   # Calcul Rspe et rank pour Viz Plancton
+  # NB : version sans pivot_wider. L'ancienne creait une matrice large (1 colonne
+  # par espece, des milliers) saturant la memoire sous webR ("cannot allocate
+  # vector"). On calcule ici la meme chose par regroupement, en format long.
   plancton_with_rspe <- reactive({
     data <- all_stations()
     if (is.null(data) || nrow(data) == 0) return(NULL)
 
-    # Pivot wider par SPECI
-    data_wide <- pivot_wider(data, names_from = SPECI, values_from = VALUE, values_fn = mean)
-    print(paste("DEBUG plancton_with_rspe: after pivot_wider, cols =", paste(colnames(data_wide), collapse = ", ")))
+    # Colonnes identifiant un echantillon (tout sauf l'espece et sa valeur)
+    id_cols <- setdiff(colnames(data), c("SPECI", "VALUE"))
 
-    # Identifier colonnes d'especes
-    meta_cols <- c("STATN", "LATIT", "LONGI", "DATA", "SDATE", "MXDEP", "CRUIS", "first_longi", "first_latit", "REGION", "Rspe", "RESP_RESULTAT")
-    species_cols <- setdiff(colnames(data_wide), meta_cols)
-
-    # Calculer Rspe
-    data_wide <- data_wide %>%
-      mutate(Rspe = rowSums(select(., all_of(species_cols)) != 0, na.rm = TRUE))
-
-    # Revenir en format long avec rank - exclure RESP_RESULTAT
-    data_long <- data_wide %>%
-      pivot_longer(
-        cols = all_of(species_cols),
-        names_to = "rank",
-        values_to = "sp_value"
-      ) %>%
+    # Valeur moyenne par echantillon et par espece, puis on ne garde que
+    # les especes reellement presentes (valeur non nulle)
+    agg <- data %>%
+      group_by(across(all_of(id_cols)), SPECI) %>%
+      summarise(sp_value = mean(VALUE), .groups = "drop") %>%
       filter(!is.na(sp_value), sp_value != 0)
 
-    data_long
+    if (nrow(agg) == 0) return(NULL)
+
+    # Richesse specifique = nombre d'especes non nulles par echantillon
+    agg %>%
+      group_by(across(all_of(id_cols))) %>%
+      mutate(Rspe = n()) %>%
+      ungroup() %>%
+      rename(rank = SPECI)
   })
 
   # Toggle parametres
