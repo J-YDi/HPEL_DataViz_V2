@@ -808,9 +808,10 @@ ui <- page_sidebar(
     "Données HPEL - Visualisation/effort d'échantillonnage",
     style = "display: flex; align-items: center;"
   ),
-  # Pas de font_google() : elle telecharge la police au demarrage (curl), ce qui
-  # echoue sous webR/Shinylive. Le bootswatch "lux" fournit deja sa police.
-  theme = bs_theme(bootswatch = "lux"),
+  # Theme Bootstrap 5 standard, SANS police Google : les presets bootswatch
+  # (ex. "lux") embarquent une police telechargee via curl au demarrage, ce qui
+  # echoue sous webR/Shinylive. On garde donc un theme sans dependance reseau.
+  theme = bs_theme(version = 5),
 
   sidebar = sidebar(
     width = 320,
