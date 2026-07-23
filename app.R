@@ -1014,7 +1014,7 @@ make_viz_hydro <- function(data, sel_datasets, sel_stations, sel_params, xlim, y
       axis.text.x = element_text(size = 5, angle = 90),
       legend.position = "bottom"
     ) +
-    facet_wrap(~ PARAM + STATN, scales = "free_y")
+    facet_wrap(~ PARAM + STATN, scales = "free_y", ncol = 1)
 
   p
 }
