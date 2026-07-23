@@ -808,6 +808,9 @@ ui <- page_sidebar(
     "Données HPEL - Visualisation/effort d'échantillonnage",
     style = "display: flex; align-items: center;"
   ),
+  # Theme Bootstrap 5 standard, SANS police Google : les presets bootswatch
+  # (ex. "lux") embarquent une police telechargee via curl au demarrage, ce qui
+  # echoue sous webR/Shinylive. On garde donc un theme sans dependance reseau.
   theme = bs_theme(version = 5),
 
   sidebar = sidebar(
@@ -1153,35 +1156,28 @@ server <- function(input, output, session) {
     }
   })
 
-  # Calcul Rspe et rank pour Viz Plancton
+  # Calcul Rspe et rank pour Viz Plancton (sans pivot_wider : evite le
+  # depassement memoire "cannot allocate vector" sous webR)
   plancton_with_rspe <- reactive({
     data <- all_stations()
     if (is.null(data) || nrow(data) == 0) return(NULL)
 
-    # Pivot wider par SPECI
-    data_wide <- pivot_wider(data, names_from = SPECI, values_from = VALUE, values_fn = mean)
-    print(paste("DEBUG plancton_with_rspe: after pivot_wider, cols =", paste(colnames(data_wide), collapse = ", ")))
+    id_cols <- setdiff(colnames(data), c("SPECI", "VALUE"))
 
-    # Identifier colonnes d'especes
-    meta_cols <- c("STATN", "LATIT", "LONGI", "DATA", "SDATE", "MXDEP", "CRUIS", "first_longi", "first_latit", "REGION", "Rspe", "RESP_RESULTAT")
-    species_cols <- setdiff(colnames(data_wide), meta_cols)
-
-    # Calculer Rspe
-    data_wide <- data_wide %>%
-      mutate(Rspe = rowSums(select(., all_of(species_cols)) != 0, na.rm = TRUE))
-
-    # Revenir en format long avec rank - exclure RESP_RESULTAT
-    data_long <- data_wide %>%
-      pivot_longer(
-        cols = all_of(species_cols),
-        names_to = "rank",
-        values_to = "sp_value"
-      ) %>%
+    agg <- data %>%
+      group_by(across(all_of(id_cols)), SPECI) %>%
+      summarise(sp_value = mean(VALUE), .groups = "drop") %>%
       filter(!is.na(sp_value), sp_value != 0)
 
-    data_long
-  })
+    if (nrow(agg) == 0) return(NULL)
 
+    agg %>%
+      group_by(across(all_of(id_cols))) %>%
+      mutate(Rspe = n()) %>%
+      ungroup() %>%
+      rename(rank = SPECI)
+  })
+  
   # Toggle parametres
   observeEvent(input$toggle_all_params, {
     all_choices <- available_params()
