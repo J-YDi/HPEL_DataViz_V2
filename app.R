@@ -1156,19 +1156,14 @@ server <- function(input, output, session) {
     }
   })
 
-  # Calcul Rspe et rank pour Viz Plancton
-  # NB : version sans pivot_wider. L'ancienne creait une matrice large (1 colonne
-  # par espece, des milliers) saturant la memoire sous webR ("cannot allocate
-  # vector"). On calcule ici la meme chose par regroupement, en format long.
+  # Calcul Rspe et rank pour Viz Plancton (sans pivot_wider : evite le
+  # depassement memoire "cannot allocate vector" sous webR)
   plancton_with_rspe <- reactive({
     data <- all_stations()
     if (is.null(data) || nrow(data) == 0) return(NULL)
 
-    # Colonnes identifiant un echantillon (tout sauf l'espece et sa valeur)
     id_cols <- setdiff(colnames(data), c("SPECI", "VALUE"))
 
-    # Valeur moyenne par echantillon et par espece, puis on ne garde que
-    # les especes reellement presentes (valeur non nulle)
     agg <- data %>%
       group_by(across(all_of(id_cols)), SPECI) %>%
       summarise(sp_value = mean(VALUE), .groups = "drop") %>%
@@ -1176,14 +1171,13 @@ server <- function(input, output, session) {
 
     if (nrow(agg) == 0) return(NULL)
 
-    # Richesse specifique = nombre d'especes non nulles par echantillon
     agg %>%
       group_by(across(all_of(id_cols))) %>%
       mutate(Rspe = n()) %>%
       ungroup() %>%
       rename(rank = SPECI)
   })
-
+  
   # Toggle parametres
   observeEvent(input$toggle_all_params, {
     all_choices <- available_params()
