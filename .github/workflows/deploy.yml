@@ -31,11 +31,23 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Install shinylive
+      # shinylive doit resoudre l'arbre de dependances des packages de l'app :
+      # il lit leur DESCRIPTION en local, donc ils doivent etre installes ici
+      # (meme si a l'execution ils tourneront en WebAssembly cote navigateur).
+      - name: Install shinylive + dependances de l'app
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           packages: |
             any::shinylive
+            any::shiny
+            any::bslib
+            any::dplyr
+            any::tidyr
+            any::ggplot2
+            any::ggthemes
+            any::ggrepel
+            any::lubridate
+            any::DT
 
       - name: Verifier la presence des donnees .rds
         shell: bash
